@@ -1,12 +1,29 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 int main()
 {
   char a[][10]={
-    "hello".
-    "world"
+    "small"，
+    "five!"
   };
-  printf("%s\n",a[0]);
-  printf("%s\n",a[1]);
+  printf("%s\n",a[0]); // small
+  printf("%s\n",a[1]); // five!
+  printf("%p\n",a[0]); // 0x6dc0
+  printf("%p\n",a[1]); // 0x6dca 地址相差10个字节
+  printf("h :%p\n",&a[0][0]); // 0x6dc0
+  printf("e :%p\n",&a[0][1]); // 0x6dc1 相差1个字节
+  printf("a[0]+1:%s\n",a[0]+1); // a[0]+1:mall
+  printf("a[1]+1:%s\n",a[1]+1); // a[1]+1:ive!
   return 0;
 }
-/* 二维数组a[][]，其中
+/* 二维数组a[][]，类似于,可以通过a[n]找到同一行的一维数组：
+   a[n][   数组     ]
+   ...
+   ...
+   a[3][   数组     ]
+   a[2][   数组     ]
+   a[1][   数组     ]
+   a[0][   数组     ]
+   二维数组a[][]，其中第二个[]必须有数字条件，表示每个数组大小；
+   a[0]的地址和"hello"的地址一样，或者说a[0]的地址和"small"中的's'地址是一样的；
