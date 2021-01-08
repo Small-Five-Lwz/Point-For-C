@@ -28,6 +28,7 @@ int main()
    二维数组a[][]，其中第二个[]必须有数字条件，表示每个数组大小；
    a[0]的地址和"small"的地址一样，或者说a[0]的地址和"small"中的's'地址是一样的，因为"small"和's'的地址是相同的
 */
+
 /* 字符串（常量 or 本地字符串数组）本质也是数组，那么，如果是int类型的二维数组，代码如下 */
 #include <stdio.h>
 int main()
@@ -55,3 +56,63 @@ int main()
 }
 
 /* 所谓指针数组 */
+#include <stdio.h>
+int main()
+{
+  char *a[] = {
+    "small",
+    "five!",
+    "python",
+    "java"
+  }; // 根据优先级，把a[]看成数组，这个数组内每个元素都是一个指针
+  printf("%s\n",a[0]); // small
+  printf("%s\n",a[1]); // five!
+  printf("%s\n",a[2]); // python
+  printf("%s\n",a[3]); // java
+  printf("small:%p\n",a[0]); // 0x6004
+  printf("five!:%p\n",a[1]); // 0x600a，是a[0]之后的6个字节，small五个字节加上'\0'
+  printf("a[1]+1:%s\n",a[1]+1); // ive，说明a[1]的地址是"five!"中'f'的地址
+  char *p = a[2]; // 声明指针p，p保存的是a[2]的地址，即'p'的地址
+  printf("p:%s\n",p); // python
+  printf("p+1:%s\n",p+1); //从'p'的地址加一个单位，现在的p+1指向的是'y'，所以%s输出为ython
+  return 0;
+}
+/* 这里和下面int数组的区别是，"字符串常量"有一种自带保存地址的属性，即通过's'能够找到字符串"small"的地址 */
+/* 如果是int数组 */
+/* 注意：指针数组内元素是数组名 */
+#include <stdio.h>
+int main()
+{
+  // int *p[] = {{1,2,3},{4,5,6}}; 
+  // 第一次尝试直接放入int数组，出现warning，int* 类型与 int类型的不匹配，说明1没有指向{1，2，3}的地址；
+  // 相比较字符串常量，会在字符串的第一个字符上保存地址，而{1，2，3}没有,But...
+  // char *p[] = {{'a','b','\0'},{'c','d','\0'}};
+  // 第二次尝试本地字符串数组，仍然会warning，下面↓
+  /*
+    char a[] = {'a','b','c','\0'};
+    printf("%p\n",a); // 0x3f14
+    printf("%s\n",a); // abc
+    printf("%s\n",a+1); // bc
+    printf("%p\n",&*a); // 0x3f14
+    printf("%p\n",&*a+1); // 0x3f15
+  */
+  // char a[] = {'a','b','\0'};
+  // char b[] = {'a','b','\0'};
+  // char *p[] = {
+  //      a,b
+  // }; 
+  // ok
+  int a[] = {1,2,3};
+  int b[] = {4,5,6};
+  int *p[] = {a,b}; // 这里放入a和b的地址，p[0]是指针，指向a，p[1]是指针，指向b
+  printf("a:%p\n",a); // 0x51d4
+  printf("b:%p\n",b); // 0x51e0 和a相差4*sizeof(int) = 12字节
+  printf("p[0]:%p\n",p[0]); // 0x51d4 和a的地址一样
+  printf("p[1]:%p\n",p[1]); // 0x51e0 和b的地址一样
+  printf("*p[0]:%d\n",p[0][0]); // 1
+  printf("*p[0]:%d\n",p[0][1]); // 2
+  printf("*p[1]:%d\n",p[1][0]); // 4
+  printf(":%d\n",*(p[0]+1)); // p[0]的地址指向1，p[0]的地址+1之后为指向2的指针，然后使用*调用返回值2
+  printf(":%d\n",(p[0]+1)[2]); // p[0]的地址指向1，p[0]的地址+1之后为指向2的指针,当使用[2]时，越出a数组（因为a和b在内存中是连续的），指向了b数组中的4
+  return 0;
+}
