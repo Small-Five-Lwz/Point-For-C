@@ -30,8 +30,6 @@ int main()
 */
 /* 字符串（常量 or 本地字符串数组）本质也是数组，那么，如果是int类型的二维数组，代码如下 */
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 int main()
 {
   int a[3][4] = {
@@ -55,3 +53,5 @@ int main()
   printf("p+1:%d\n",(p+1)[0]); // 2,这里也可以使用*(p+1)
   return 0;
 }
+
+/* 所谓指针数组 */
