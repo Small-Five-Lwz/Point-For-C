@@ -115,7 +115,7 @@ int main()
   // char b[] = {'a','b','\0'};
   // char *p[] = {
   //      a,b
-  // }; 
+  // }; 说明这里需要放入地址
   // ok
   int a[] = {1,2,3};
   int b[] = {4,5,6};
@@ -160,7 +160,7 @@ int main()
 #include <stdio.h>
 int main(int argc,char const *argv[])
 {
-  int a[][2] = {1,2,3,40};
+  int a[][2] = {1,2,3,40}; // int a[][2] = {1,2,3,40} 等价于 {{1,2}，{3,40}}
   int *p = a[0]; // 文开头已经测试。a[0]就是地址
   int **po = &p; // 二级指针po，指向p的地址
   printf("a:%p\n",a); //0xe0f0
@@ -197,5 +197,49 @@ int main(int argc,char const *argv[])
   printf("TRUE?:%d\n",&((*p)[0]) == a[1]); // 1 True
   printf("p:%d\n",(*p)[0]); // 3
   printf("p:%d\n",(*p)[2]); // 一个位置内存的value
+  return 0;
+}
+/* 代码段4 大脑已经混乱Orz，win 10切换输入法可以只用shift ~*/
+/* 请自行体会 */
+#include <stdio.h>
+int main(void)
+{
+  char const *a[]={
+    "java",
+    "cplusplus",
+   "javascript"
+  };
+  char (*p)[] = a[1]; // 这里会有一个warning（可以正常运行），因为int (*)[]类型和int *类型不一样，如果使用&a[1]就不会有warning，虽然都是传地址，但是貌似等级不一样
+  printf("%s\n",*p+6); // *p是a[1]的地址
+  printf("%c\n",(*p)[11]); // 把*p看成a[1]的地址，也可以看成'c'的地址，11个步长之后 ... 跳转到a[2]的数组范围内
+  return 0;
+}
+/*  
+#include <stdio.h>
+int main(void)
+{
+  int const a[][2] = {
+    1,2,3,4
+  };
+  return 0;
+}
+对于1，2，3，4无论是否用数组的{}，都会被分配成数组的形式
+*/
+/* int类型的，数组指针 */
+#include <stdio.h>
+int main(void)
+{
+  int b[]={1,2,3,4};
+  int c[]={1,2};
+  int const *a[] = {
+    b,c
+  };
+  int (*p)[] = a[0]; // 这里会有一个warning，因为int (*)[]类型和int *类型的不匹配，但是现在暂时没有找到解决方法，这里把b[0]的地址看成和*p的地址一样，*p是一个地址，所以p类似二级指针
+  printf("b:%p\n",b); // 0x12d0
+  printf("p:%p\n",p); // 0x12d0
+  printf("true::%d\n",(b+4) == ((*p)+4)); // 判断一下地址是否相同
+  printf("%d\n",(*p)[1]); // 2
+  printf("%d\n",(*p)[2]); // 3
+  printf("%d\n",(*p)[3]); // 4
   return 0;
 }
