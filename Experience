@@ -186,3 +186,16 @@ int main(int argc,char const *argv[])
   return 0;
 }
 /* 代码段3 通过数组指针*/
+#include <stdio.h>
+int main(int argc,char const *argv[])
+{
+  int a[][2] = {1,2,3,40};
+  int (*p)[] = &a[1]; // (*p)提高了优先级，声明的p这个指针，指向了一个数组，注意：这里需要a[1]的地址，不能直接给a，因为int (*)[]类型和int *类型不一样
+  printf("p:%p\n",p); // 0x1398
+  printf("p:%p\n",(*p)+1); // 0x139c 相差4个字节
+  printf("TRUE?:%d\n",&((*p)[0]) == a[0]); // 0 False
+  printf("TRUE?:%d\n",&((*p)[0]) == a[1]); // 1 True
+  printf("p:%d\n",(*p)[0]); // 3
+  printf("p:%d\n",(*p)[2]); // 一个位置内存的value
+  return 0;
+}
