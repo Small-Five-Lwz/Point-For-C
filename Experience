@@ -153,3 +153,36 @@ int main()
   printf("%d\n",(p[2]+3) == (&p[0][1]-1)); // 1 判断一下这两个地址是否相同~
   return 0;
 }
+
+/* 所谓数组指针，一个指向数组的指针？那么和普通指针有什么区别？普通指针也能指向数组 */
+// 把数组指针的指针p看成是二级指针 int (*p)[] ---> int **p
+/* 代码段1 通过二级指针*/
+#include <stdio.h>
+int main(int argc,char const *argv[])
+{
+  int a[][2] = {1,2,3,40};
+  int *p = a[0]; // 文开头已经测试。a[0]就是地址
+  int **po = &p; // 二级指针po，指向p的地址
+  printf("a:%p\n",a); //0xe0f0
+  printf("p:%p\n",p); //0xe0f0
+  printf("po:%p\n",po); //0xe0e0 与a或者p相差4 * sizeof(int) = 16字节
+  printf("po+1:%p\n",(*po)+1); // 步长为一个单位 = 4字节
+  printf("%d\n",(*po)[2]); //*po-->p-->a[0]，所以a[0][2] = 3
+  printf("%d\n",(*po)[0]); ////1
+  return 0;
+}
+/* 代码段2 通过一个指针*/
+#include <stdio.h>
+int main(int argc,char const *argv[])
+{
+  int a[][2] = {1,2,3,40};
+  int *p =a[0]; // p指向a[0]
+  printf("a:%p\n",a); // 0x3820
+  printf("p:%p\n",p); // 0x3820
+  printf("p+1:%p\n",p+1); // 0x3824，步长为4个字节
+  printf("%d\n",p[0]); // 1
+  printf("%d\n",p[1]); // 2
+  printf("%d\n",p[2]); // 3
+  return 0;
+}
+/* 代码段3 通过数组指针*/
