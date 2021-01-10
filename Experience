@@ -196,7 +196,7 @@ int main(int argc,char const *argv[])
   printf("TRUE?:%d\n",&((*p)[0]) == a[0]); // 0 False
   printf("TRUE?:%d\n",&((*p)[0]) == a[1]); // 1 True
   printf("p:%d\n",(*p)[0]); // 3
-  printf("p:%d\n",(*p)[2]); // 一个位置内存的value
+  printf("p:%d\n",(*p)[2]); // 一个未知内存的value
   return 0;
 }
 /* 代码段4 大脑已经混乱Orz，win 10切换输入法可以只用shift ~*/
@@ -241,5 +241,32 @@ int main(void)
   printf("%d\n",(*p)[1]); // 2
   printf("%d\n",(*p)[2]); // 3
   printf("%d\n",(*p)[3]); // 4
+  return 0;
+}
+
+/* 结构struct中的地址问题 */
+#include <stdio.h>
+struct point{
+  int x;
+  int y;
+  }; // 这里是一个struct
+int main(void)
+{
+  struct point array[] = {
+    {1,2},{3,4},{5,6}
+  };
+   /*
+  printf("array[0]:%d-%d\n",array[0].x,array[0].y); // array[0]返回一个struct point类型的数据
+  printf("array[0]:%p\n",array); // array的地址 0x5090
+  printf("array[1]:%p\n",array+1); // array的地址加 2 * sizeof(int) = 8字节大小 0x5098
+  printf("%d\n",(array+2)->y); // 通过指针->的方法取到struct的数据，说明array+2是个地址，即指针
+  struct point *p = &array[1]; // 指针p = array[1]的地址
+  printf("%d\n",p->x); // p->x
+  */
+  printf("array:%p\n",array);
+  printf("array[0]:%p\n",&array[0]);
+  printf("array[1]:%p\n",&array[1]); // array[0]地址+一个单位
+  printf("%d\n",array+1 == &array[1]); //1
+  printf("%p\n",&((&(array[1]))->y)); // array[1].y的地址是array[0]的地址+4字节的位置
   return 0;
 }
