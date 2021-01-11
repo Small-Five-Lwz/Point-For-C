@@ -270,3 +270,57 @@ int main(void)
   printf("%p\n",&((&(array[1]))->y)); // array[1].y的地址是array[0]的地址+4字节的位置
   return 0;
 }
+
+/* 结构数组 代码1 */
+#include <stdio.h>
+struct point{
+  int x;
+  int y;
+};
+/* 结构套结构 */
+struct multi_struct {
+  struct point p1;
+  struct point p2;
+};
+int main(int argc, char const *argv[])
+{
+  struct multi_struct array[][2]={
+    {{1,2},{3,4}},{{5,6},{7,8}},
+    {{9,10},{11,12}},{{13,14},{15,16}},
+  };
+  printf("array[0]:%p\n",array[0]); // 0xf350
+  printf("array:%p\n",array); // 和array[0]的地址一样 0xf350
+  printf("1:%p\n",&(array[0][0].p1.x)); // 0xf350
+  printf("2:%p\n",&(array[0][0].p1.y)); // 0xf354，相差一个int = 4字节
+  printf("15:%p\n",&(array[1][1].p2.x)); // 0xf388
+  printf("16:%p\n",&(array[1][1].p2.y)); // 0xf38c，与数组头正好相差4 * sizeof(int) = 60字节
+  return 0;
+}
+/* 结构数组+数组指针 代码2 */
+#include <stdio.h>
+struct point{
+  int x;
+  int y;
+};
+struct multi_struct {
+  struct point p1;
+  struct point p2;
+};
+int main(int argc, char const *argv[])
+{
+  struct multi_struct a = {{1,2},{3,4}};
+  struct multi_struct b = {{5,6},{7,8}};
+  struct multi_struct c = {{9,10},{11,12}};
+  struct multi_struct d = {{13,14},{15,16}};
+  struct multi_struct *array[]={
+    &a,&b,
+    &c,&d
+  }; // 这里需要传入地址
+  printf("%d\n",array[0]->p1.x); // 1
+  printf("%d\n",array[3]->p2.y); // 16
+  printf("1:%p\n",&(array[0][0].p1.x)); // 0x32b0
+  printf("2:%p\n",&(array[0][0].p1.y)); // 0x32b4
+  printf("15:%p\n",&(array[0][1].p2.x)); 
+  printf("16:%p\n",&(array[3]->p2.y)); // 0x32ec
+  return 0;
+}
