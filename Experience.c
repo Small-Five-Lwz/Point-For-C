@@ -324,3 +324,46 @@ int main(int argc, char const *argv[])
   printf("16:%p\n",&(array[3]->p2.y)); // 0x32ec
   return 0;
 }
+/* 结构数组与指针数组和数组指针的关联问题 */
+#include <stdio.h>
+struct point {
+  int x;
+  int y;
+}; // 第一个struct
+struct multi_struct {
+  struct point p1;
+  struct point p2;
+}; // 结构嵌套
+int main(int argc, char const *argv[])
+{
+  // 一个具有3个单元的结构数组，array[0]或者说array就是第一个的地址，array[1]或者array+1就是第二个地址，array[2]或者array+2就是第三个地址
+  struct multi_struct array[3] = {
+    {{1,2},{3,4}},
+    {{5,6},{7,8}},
+    {{9,10},{11,12}},
+};
+  struct multi_struct (*a)[] = &(array[0]); // 这里会有一个warning，但是这里还是没有真正的明白这个warning的原因...暂时理解a类似一个二级指针
+
+  printf("THIS IS 7?:%d\n",((*a)+1)->p2.x); // THIS IS 7?:7 ，这里*a返回一个地址，即array[0]的地址，其实array[0]不应该是一个地址，如果是array[0][0]的话应该就没有问题
+                                            //  所以这里暂时把*a看成一个地址，*a+1到第二个struct multi_struct结构的地址，如果是地址，就可以用->指向p2，然后.x输出7
+/* 以下任何代码都没有warning，严格按照地址-指针规则，同时为了不记忆优先级，所以可能多使用了()
+struct multi_struct *a[] = {
+  array,
+  array+1,
+  array+2
+};  // a[]是指针数组，需要给予若干个地址
+printf("I Wang To Get 1:%d\n",a[0]->p1.x);
+printf("I Wang To Get 2:%d\n",a[0][0].p1.y); // a[0][0]的第二个[0]其实没什么特别的含义，只是用来取出a[0]这个结构，和下面的*的作用一样
+rintf("I Wang To Get 3:%d\n",(*(a[0])).p1.y);
+printf("I Wang To Get 4:%d\n",array->p2.y);
+printf("I Wang To Get 5:%d\n",(array+1)->p1.x);
+printf("I Wang To Get 6:%d\n",a[0][1].p1.y); // a[0][1]的[1]类似于步长，从a[0]跨到a[1]
+printf("I Wang To Get 7:%d\n",a[1][0].p2.x);
+printf("I Wang To Get 8:%d\n",(array+1)->p2.y);
+printf("I Wang To Get 9:%d\n",(array+2)[0].p1.x);
+printf("I Wang To Get 10:%d\n",(a[1]+1)->p1.y); // 注意步长
+printf("I Wang To Get 11:%d\n",(a[1]+1)->p2.x); // 注意步长
+printf("I Wang To Get 12:%d\n",(*(array+2)).p2.y);
+*/
+return 0;
+}
