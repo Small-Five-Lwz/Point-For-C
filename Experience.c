@@ -367,3 +367,20 @@ printf("I Wang To Get 12:%d\n",(*(array+2)).p2.y);
 */
 return 0;
 }
+/* 在结构中， 貌似无法使用结构的地址， 代码如下： */
+#include <stdio.h>
+struct point {
+  int x;
+  int y;
+};
+int main(void)
+{
+  struct point a = {1,2};
+  struct point *p = &a; // p是指针
+  printf("a:%p\n",&a); // 0x9f70
+  printf("a.x:%p\n",&(a.x)); // 0x9f70
+  printf("p:%p\n",&p); // 0x9f68 p指针有独立内存空间， 正好相差8字节
+  printf("p+1:%p\n",p+1); // 0x9f78 p+1个指针之后会跳过整个结构体，所以加上sizeof(int) + sizeof(int) = 8字节
+  printf("&a+1:%p\n",&a+1); // 0x9f78
+  // printf("%d\n",(&a->x)); // 这里会报错， 不能直接使用结构地址进行->，而是需要使用指针
+}
