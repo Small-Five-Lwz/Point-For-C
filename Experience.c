@@ -431,4 +431,30 @@ int main(void)
 }
 /* 这里为什么要在(*p)[]的前面还要加上'*'，当时考虑的是，char (*p)[]中的*p必须指向一个数组（为了好理解，说成指向一个数组的第一个元素，例如普通数组a[]的a就是指向的a[0]，但是a并没有指向
 整个数组a），在char *a[]中，有一个数组a[]，所以想要把p指向a，所以*p=a，因为a指向了a[0]，即*p指向a[0]，但是注意a[]返回的是char *类型，而(*p)[]返回的不是char类型，而是char *类型，所以
-要在前面加上'*'，
+要在前面加上'*' */
+#include <stdio.h>
+int main(void)
+{
+  char *a[] = {
+    "Cplusplus",
+    "PHP",
+    "JavaScript"
+  };
+  char *(*p)[] = &a; // 已经在上面解释
+  char **q = &a[0]; // 这里为什么需要二级指针？ 一开始写的是char **q = &a，因为把a和a[0]的地址想成一样的，如果这里是**q = &a，那么*q = a，a指针指向指针数组，**q = a[0]
+  // char (**b) = &a;  error 
+  //printf("%s is J\n", (*p)+14);
+/*
+  char b[] = "JavaScript";
+  char (*q)[] = &b;
+  printf("%d\n", (*q)[10] == '\0');
+*/
+/*
+  printf("%c is u?\n", ((*p)[0]+7)[0]);
+  printf("%c is P?\n", (*p)[1][2]);
+  printf("%s\n", (*p)[0]);
+  printf("%s\n", (*p)[1]);
+  printf("%s\n", (*p)[2]);
+*/
+  return 0;
+}
