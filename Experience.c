@@ -447,7 +447,10 @@ int main(void)
   };
   char *(*p)[] = &a; // 已经在上面解释
   char **q = &a[0]; // 这里为什么需要二级指针？ 一开始写的是char **q = &a，因为把a和a[0]的地址想成一样的，如果这里是**q = &a，那么*q = a，a指针指向指针数组，**q = a[0]
-  // char (**b) = &a;  error 
+  // char (***b) = &a;  error 指针和数组名的关系，貌似在2021年1月21日已经彻底搞明白了，数组和指针的完全不同性，想要单独理一个段落
+  // 当b=&a时，其实可以理解为两条有效信息，第一b是指针，保存了a的地址信息，第二，b指向a，也就在这里把指针和数组的关系区分了开来，a是指向一个数组的，但是**b指向的数组的第一个“值”，两者
+  // 不等价
+  // 为什么int a[];int *p = a;可以，因为p=a也包含两层信息，第一，p是指针，第二，p（和a一样（为了好理解，把a和指针假想成一样））指向a[0]那个int的值，所以*p是一个int，没有问题。
   //printf("%s is J\n", (*p)+14);
 /*
   char b[] = "JavaScript";
@@ -463,3 +466,42 @@ int main(void)
 */
   return 0;
 }
+
+/* 函数指针的“混乱”理解 */
+/* 正常来说，函数指针例如 int (*p)(int,char,...参数) = 函数名(或者&函数名) 即可，p表示指针 */
+#include <stdio.h>
+int add(int a, int b)
+{
+  return a+b;
+}
+int sub(int a, int b)
+{
+  return a-b;
+}
+int middle(int (*p)(int,int),int a,int b)
+{
+  return (*p)(a,b);
+}
+int (*select(char op))(int, int)
+{
+  switch (op){
+    case '+':return add;
+    case '-':return sub;
+  }
+}
+int main(void)
+{
+  int a;
+  int b;
+  char oper;
+  int (*fp)(int, int);
+  printf("I NEED A SENTENCE:");
+  scanf("%d%c%d", &a, &oper, &b);
+  fp = select(oper); // 返回的add或者sub已经是一个地址了， 所以不能再使用&select(oper)
+  printf("a%cb=%d\n",oper,middle(fp,a,b));
+  return 0;
+}
+/* 在main函数内部定义了一个看似正常的int (*fp)(int, int)的函数指针，要把int (*select(char op))(int, int)也要看成int (*p)(int, int)的类型（即把select(char op)看成一个整体，看成一个
+指针） */
+/* 在int (*select(char op))(int, int)函数块中，在理解的时候不要把它当作函数来处理，虽然它确实是函数，但是还是把它当作一个定义的函数指针，在没有把它当作函数的前提下，在调用的时候
+fp = select(oper)时才把它当作一个函数来看待，返回一个函数指针给fp */
